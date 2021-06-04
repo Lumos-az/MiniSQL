@@ -1,0 +1,8 @@
+//
+// Created by 何昂展 on 2021/6/4.
+//
+
+#ifndef MINISQL_CATALOGMANAGER_H
+#define MINISQL_CATALOGMANAGER_H
+
+#endif //MINISQL_CATALOGMANAGER_H
