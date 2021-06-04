@@ -2,7 +2,7 @@
 
 ## 体系结构
 
-![image-20210604101459043](/Users/heangzhan/Library/Application Support/typora-user-images/image-20210604101459043.png)
+[![2GpwVI.png](https://z3.ax1x.com/2021/06/04/2GpwVI.png)](https://imgtu.com/i/2GpwVI)
 
 
 
