@@ -1,5 +1,11 @@
 # MiniSQL
 
+## 接口说明
+
+> 请各模块将需要共用的接口信息写在下方
+
+### 
+
 ## 体系结构
 
 [![2GpwVI.png](https://z3.ax1x.com/2021/06/04/2GpwVI.png)](https://imgtu.com/i/2GpwVI)
