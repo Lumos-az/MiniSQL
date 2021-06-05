@@ -8,23 +8,7 @@ using namespace std;
 
 int main() {
     Interpreter i;
-    string line;
-    string text;
-    string blank = " ";
-    do {
-        getline(cin, line);
-        text += blank;
-        text += line;
-    } while (text[text.size() - 1] != ';');
-//    for (int j = 0; j < text.size(); ++j) {
-//        cout << j << text[j] << endl;
-//    }
-    int position = 0;
-    int *shift = &position;
-    cout << text << endl;
-    for (int j = 0; j < 11; ++j) {
-        cout << i.ExtractWord(text, shift) << endl;
-    }
+    i.MainPage();
 
 
 //    string c = "123";

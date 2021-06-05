@@ -12,8 +12,15 @@ using namespace std;
 class Interpreter {
 public:
     void MainPage();
-    int Interpret(string text);
-    string ExtractWord(string text, int *shift);
+    int Interpret(const string& text);
+    // Extract single word or key symbol
+    string extractWord(const string& text, int* shift);
+    // Process Word "create"
+    int execCreate(const string& text, int* shift);
+    // Create Table
+    int execCreateTable(const string& text, int* shift);
+    // Create Index
+    int execCreateIndex(const string& text, int* shift);
     Interpreter();
     ~Interpreter();
 

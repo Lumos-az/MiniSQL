@@ -12,6 +12,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b42a0761-c6d7-46d2-b73d-951cb824083b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Interpreter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Interpreter.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/test.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -20,6 +24,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ClangdSettings">
+    <option name="clangTidyViaClangd" value="false" />
     <option name="formatViaClangd" value="false" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
@@ -65,11 +70,22 @@
       <option name="presentableId" value="Default" />
       <updated>1622702829674</updated>
       <workItem from="1622702831188" duration="6818000" />
-      <workItem from="1622771820568" duration="1595000" />
+      <workItem from="1622771820568" duration="6213000" />
+      <workItem from="1622796236905" duration="6749000" />
+      <workItem from="1622884520655" duration="11684000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="CMakeRunConfiguration">
+        <watch expression="text" language="ObjectiveC" />
+        <watch expression="text[*shift]" language="ObjectiveC" />
+        <watch expression="*shift" language="ObjectiveC" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
