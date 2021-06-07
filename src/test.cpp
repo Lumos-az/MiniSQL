@@ -3,6 +3,8 @@
 //
 #include <iostream>
 #include <string>
+#include <iostream>
+#include <fstream>
 #include "Interpreter.h"
 using namespace std;
 
@@ -36,4 +38,25 @@ int main() {
 //    cout << (p == "") << endl;
 //    cout << s.substr(2, 1) << endl;
 //    cout << p << endl;
+
+//    ifstream ifs("../data/test.txt");
+//    // Determine whether the file can be opened
+//    if (!ifs) {
+//        cout << "executable file not found" << endl;
+//        return 2;
+//    }
+//    string line;
+//    string fileText;
+//    string blank = " ";
+//    while (!ifs.eof()) {
+//        fileText = "";
+//        do {
+//            getline(ifs, line);
+//            if (ifs.eof())
+//                break;
+//            fileText += blank;
+//            fileText += line;
+//        } while (fileText[fileText.size() - 1] != ';');
+//        cout << fileText << endl;
+//    }
 }
