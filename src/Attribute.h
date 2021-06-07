@@ -12,16 +12,16 @@ public:
     int static const TYPE_INT = 0;
     int static const TYPE_FLOAT = 1;
     int static const TYPE_CHAR = 2;
-    // Name of attribute
+
     string name;
-    // Data type
+    // Data type: 0->int, 1->float, 2->char
     int dataType;
     int charSize;
     bool unique;
     string index;
     bool primaryKey;
 
-    Attribute(string n, int t, bool u, int c = 0, bool p = false, string i = "") {
+    Attribute(string n, int t, bool u = false, int c = 0, bool p = false, string i = "") {
         name = n;
         dataType = t;
         unique = u;

@@ -4,6 +4,7 @@
 
 #include "Interpreter.h"
 #include "Attribute.h"
+#include "Condition.h"
 #include <string>
 #include <cstring>
 #include <iostream>
@@ -38,6 +39,12 @@ int Interpreter::Interpret(const string& text) {
     string word = extractWord(text, shift);
     if (word == "create") {
         return execCreate(text, shift);
+    }
+    else if (word == "drop") {
+        return execDrop(text, shift);
+    }
+    else if (word == "select") {
+        return execSelect(text, shift);
     }
     return 0;
 }
@@ -210,9 +217,171 @@ int Interpreter::execCreateTable(const string& text, int *shift) {
 
 /* Create index */
 int Interpreter::execCreateIndex(const string& text, int *shift) {
+    string indexName;
+    string tableName;
+    string attributeName;
+    string word = extractWord(text, shift);
+    indexName = word;
 
+    // Determine whether "on" exists
+    word = extractWord(text, shift);
+    if (word != "on") {
+        cout << "Syntax error for no \"on\"" << endl;
+        return 0;
+    }
+
+    word = extractWord(text, shift);
+    tableName = word;
+
+    // Determine whether "(" exists
+    word = extractWord(text, shift);
+    if (word != "(") {
+        cout << "Syntax error for no \"(\"" << endl;
+        return 0;
+    }
+
+    word = extractWord(text, shift);
+    attributeName = word;
+
+    // Determine whether ")" exists
+    word = extractWord(text, shift);
+    if (word != ")") {
+        if (word != "(") {
+            cout << "Syntax error for no \")\"" << endl;
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
+/* Process the word "drop" */
+int Interpreter::execDrop(const string& text, int* shift) {
+    string word = extractWord(text, shift);
+    if (word == "table") {
+        return execDropTable(text, shift);
+    }
+    else if (word == "index") {
+        return execDropIndex(text, shift);
+    }
+    else {
+        cout << "Syntax error for drop" << endl;
+        return 0;
+    }
+}
+
+/* Drop table */
+int Interpreter::execDropTable(const string& text, int* shift) {
+    string tableName;
+    string word = extractWord(text, shift);
+    tableName = word;
+
+    // Determine whether table name exists
+    word = extractWord(text, shift);
+    if (word != ";") {
+        cout << "Syntax error for missing table name" << endl;
+        return 0;
+    }
+
+    return 1;
+}
+
+/* Drop index */
+int Interpreter::execDropIndex(const string& text, int* shift) {
+    string indexName;
+    string word = extractWord(text, shift);
+    indexName = word;
+
+    // Determine whether index name exists
+    word = extractWord(text, shift);
+    if (word != ";") {
+        cout << "Syntax error for missing index name" << endl;
+        return 0;
+    }
+
+    return 1;
+}
+
+/* Process the word "select" */
+int Interpreter::execSelect(const string &text, int *shift) {
+    // In case we need to select specific attributes later, use vector
+    vector<string> attributes;
+    string tableName;
+
+    // Determine whether "*" exists
+    string word = extractWord(text, shift);
+    if (word != "*") {
+        cout << "Syntax error for missing \"*\"" << endl;
+        return 0;
+    }
+    attributes.push_back(word);
+
+    // Determine whether "from" exists
+    word = extractWord(text, shift);
+    if (word != "from") {
+        cout << "Syntax error for missing \"from\"" << endl;
+        return 0;
+    }
+
+    word = extractWord(text, shift);
+    tableName = word;
+
+    // Determine whether the sentence is over
+    word = extractWord(text, shift);
+    // Sentence is over
+    if (word == ";") {
+        return 1;
+    }
+    // Conditional statement exists
+    else if (word == "where") {
+        vector<Condition> conditions;
+        string attributeName;
+        int operate;
+        string value;
+
+        // Extract all conditions
+        do {
+            word = extractWord(text, shift);
+            attributeName = word;
+            word = extractWord(text, shift);
+            if (word ==  "=")
+                operate = Condition::OPERATOR_EQUAL;
+            else if (word == "<")
+                operate = Condition::OPERATOR_LESS;
+            else if (word == ">")
+                operate = Condition::OPERATOR_MORE;
+            else if (word == "<=")
+                operate = Condition::OPERATOR_LESS_EQUAL;
+            else if (word == ">=")
+                operate = Condition::OPERATOR_MORE_EQUAL;
+            else if (word == "<>")
+                operate = Condition::OPERATOR_NOT_EQUAL;
+            else {
+                cout << "Syntax error for condition" << endl;
+                return 0;
+            }
+            word = extractWord(text, shift);
+            value = word;
+
+            // Create and store the condition
+            Condition condition(attributeName, operate, value);
+            conditions.push_back(condition);
+
+            word = extractWord(text, shift);
+        } while (word == "and");
+
+        // Determine whether the ";" exists
+        if (word != ";") {
+            cout << "Syntax error for no \";\"" << endl;
+            return 0;
+        }
+        return 1;
+    }
+    else {
+        cout << "Syntax error" << endl;
+        return 0;
+    }
+}
 /* Pick up single word or key symbol */
 string Interpreter::extractWord(const string& text, int *shift) {
     string word;
@@ -230,19 +399,23 @@ string Interpreter::extractWord(const string& text, int *shift) {
         return word;
     }
     // Encounter quotation mark
-    else if (text[*shift] == '\'' || text[*shift] == '\"') {
+    else if (text[*shift] == '\'') {
         (*shift)++;
         start = *shift;
-        while (text[*shift] != '\'' || text[*shift] != '\"') {
+        while (text[*shift] != '\'' && text[*shift] != ';') {
+            if (*shift > 100) {
+                break;
+            }
             (*shift)++;
         }
         // Can't find the corresponding quotation mark
-        if (text[*shift] != '\'' && text[*shift] != '\"') {
+        if (text[*shift] != '\'') {
             return word;
         }
         else {
             end = *shift;
             word = text.substr(start, end - start);
+            (*shift)++;
             return word;
         }
     }
@@ -259,12 +432,6 @@ string Interpreter::extractWord(const string& text, int *shift) {
 
 }
 
-Interpreter::Interpreter() {
 
-}
-
-Interpreter::~Interpreter() {
-
-}
 
 

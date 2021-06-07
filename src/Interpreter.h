@@ -15,14 +15,23 @@ public:
     int Interpret(const string& text);
     // Extract single word or key symbol
     string extractWord(const string& text, int* shift);
-    // Process Word "create"
+    // Process word "create"
     int execCreate(const string& text, int* shift);
-    // Create Table
+    // Create table
     int execCreateTable(const string& text, int* shift);
-    // Create Index
+    // Create index
     int execCreateIndex(const string& text, int* shift);
-    Interpreter();
-    ~Interpreter();
+    // Process word "drop"
+    int execDrop(const string& text, int* shift);
+    // Drop table
+    int execDropTable(const string& text, int* shift);
+    // Drop index
+    int execDropIndex(const string& text, int* shift);
+    // Process word "select"
+    int execSelect(const string& text, int* shift);
+
+    Interpreter() {};
+    ~Interpreter() {};
 
 };
 

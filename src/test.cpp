@@ -10,6 +10,21 @@ int main() {
     Interpreter i;
     i.MainPage();
 
+//    string line;
+//    string text;
+//    string blank = " ";
+//    text = "";
+//    do {
+//        getline(cin, line);
+//        text += blank;
+//        text += line;
+//    } while (text[text.size() - 1] != ';');
+//    cout << text << endl;
+//    int position = 0;
+//    int* shift = &position;
+//    cout << i.extractWord(text, shift) << endl;
+//    cout << (i.extractWord(text, shift) == "") << endl;
+
 
 //    string c = "123";
 //    c = s + c;
