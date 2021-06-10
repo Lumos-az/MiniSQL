@@ -5,6 +5,7 @@
 #ifndef MINISQL_INTERPRETER_H
 #define MINISQL_INTERPRETER_H
 
+
 #include <cstring>
 #include <vector>
 
@@ -54,9 +55,9 @@ public:
     // Exec SQL file
     int execFile(const string &text, int *shift);
 
-    Interpreter() = default;;
+    Interpreter() = default;
 
-    ~Interpreter() = default;;
+    ~Interpreter() = default;
 
 };
 

@@ -1,0 +1,3 @@
+card | 2 | 0 | name #
+name | 2 | 5 | 1 | none #
+sex | 2 | 2 | 0 | none #

@@ -5,8 +5,8 @@
 #include "Interpreter.h"
 #include "Attribute.h"
 #include "Condition.h"
+#include "CatalogManager.h"
 #include <string>
-#include <cstring>
 #include <iostream>
 #include <fstream>
 
@@ -218,6 +218,8 @@ int Interpreter::execCreateTable(const string &text, int *shift) {
         return 0;
     }
 
+    CatalogManager cm;
+    cm.createTable(tableName, &attributes);
     return 1;
 }
 
@@ -287,19 +289,32 @@ int Interpreter::execDropTable(const string &text, int *shift) {
         return 0;
     }
 
+    CatalogManager cm;
+    cm.dropTable(tableName);
     return 1;
 }
 
 /* Drop index */
 int Interpreter::execDropIndex(const string &text, int *shift) {
     string indexName;
+    string tableName;
     string word = extractWord(text, shift);
     indexName = word;
 
-    // Determine whether index name exists
+    // Determine whether "on" exists
+    word = extractWord(text, shift);
+    if (word != "on") {
+        cout << "Syntax error for missing \"on\"" << endl;
+        return 0;
+    }
+
+    word = extractWord(text, shift);
+    tableName = word;
+
+    // Determine whether table name exists
     word = extractWord(text, shift);
     if (word != ";") {
-        cout << "Syntax error for missing index name" << endl;
+        cout << "Syntax error for missing table name" << endl;
         return 0;
     }
 

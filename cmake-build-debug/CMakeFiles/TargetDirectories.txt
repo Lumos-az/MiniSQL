@@ -1,0 +1,3 @@
+/Users/heangzhan/Desktop/MiniSQL/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/heangzhan/Desktop/MiniSQL/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/heangzhan/Desktop/MiniSQL/cmake-build-debug/CMakeFiles/MiniSQL.dir

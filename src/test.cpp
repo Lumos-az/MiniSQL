@@ -6,11 +6,37 @@
 #include <iostream>
 #include <fstream>
 #include "Interpreter.h"
+#include "CatalogManager.h"
 using namespace std;
 
 int main() {
     Interpreter i;
     i.MainPage();
+
+//    bool flag = true;
+//    cout << to_string(flag) << endl;
+//
+//    string s = "abbb23df";
+//    cout << s.find("123") << endl;
+//    int start = s.find("b");
+//    int end = s.find("b", start + 1);
+//    cout << start << " " << end << endl;
+//    cout << s.substr(start, s.size() - start) << endl;
+//
+//    bool a = 0;
+//    cout << a << endl;
+
+//    char *c = new char[100];
+//    strcpy(c, s.c_str());
+//    cout << c << endl;
+//    strcpy(c, "11111111111111");
+//    cout << c << endl;
+//    string cs(c);
+//    cout << cs << endl;
+
+//    CatalogManager cm;
+//    cout << cm.findTable("abc") << endl;
+//    cout << cm.findTable("test") << endl;
 
 //    string line;
 //    string text;

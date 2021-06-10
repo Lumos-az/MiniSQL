@@ -7,6 +7,8 @@
 
 #include <string>
 
+using namespace std;
+
 class Attribute {
 public:
     int static const TYPE_INT = 0;
@@ -21,7 +23,7 @@ public:
     string index;
     bool primaryKey;
 
-    Attribute(string n, int t, bool u = false, int c = 0, bool p = false, string i = "") {
+    Attribute(string n, int t, bool u = false, int c = 0, bool p = false, string i = "none") {
         name = n;
         dataType = t;
         unique = u;

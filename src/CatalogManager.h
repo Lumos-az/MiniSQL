@@ -5,4 +5,39 @@
 #ifndef MINISQL_CATALOGMANAGER_H
 #define MINISQL_CATALOGMANAGER_H
 
+#include "Attribute.h"
+#include "BufferManager.h"
+#include <string>
+#include<vector>
+
+using namespace std;
+
+extern BufferManager bm;
+
+class CatalogManager {
+public:
+
+    // Table
+    string createTableInfo(const string& tableName, vector<Attribute> *attributes);
+
+    int findTable(const string& tableName);
+
+    int dropTable(string tableName);
+
+    int createTable(const string& tableName, vector<Attribute> *attributes);
+
+
+    // Attribute
+    vector<Attribute> getAttribute(const string& tableName);
+
+    int findAttribute(const string& tableName, const string& attributeName);
+
+    // Index
+    int createIndex(const string& tableName, const string& attributeName, const string& indexName);
+
+    int dropIndex(const string& tableName, const string& attributeName, const string& indexName);
+
+    string findIndex(const string& tableName, const string& indexName);
+};
+
 #endif //MINISQL_CATALOGMANAGER_H

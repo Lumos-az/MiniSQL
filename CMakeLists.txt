@@ -10,4 +10,11 @@ add_executable(MiniSQL
         src/CatalogManager.h
         src/Interpreter.cpp
         src/Interpreter.h
-        src/test.cpp)
+        src/test.cpp
+        src/Condition.cpp
+        src/Condition.h
+        src/BufferManager.cpp
+        src/BufferManager.h
+        src/RecordManager.cpp
+        src/RecordManager.h
+        )
