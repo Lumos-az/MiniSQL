@@ -18,8 +18,7 @@
       <change afterPath="$PROJECT_DIR$/../Internship/Numpy/.idea/Numpy.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Internship/data-preprocess0510/.idea/data-preprocess0510.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Internship/data_preprocess0520/.idea/data_preprocess0520.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Project/.idea/Project.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Project/online-medical/.idea/online-medical.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/TableInfo.txt" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../SRTP/部署文档和代码/service/.idea/service.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../TaoBao_Data_Process/.idea/TaoBao_Data_Process.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../数据库系统/Labs/Lab5/Project/.idea/Project.iml" afterDir="false" />
@@ -34,8 +33,7 @@
       <change afterPath="$PROJECT_DIR$/../高级数据结构与算法分析/Code/Leftist Heaps/.idea/Leftist Heaps.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../高级数据结构与算法分析/Code/Test/.idea/Test.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Attribute.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Attribute.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/book.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/CatalogManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/CatalogManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/CatalogManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/CatalogManager.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Interpreter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter.cpp" afterDir="false" />
@@ -74,12 +72,12 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RunManager">
-    <configuration name="MiniSQL" type="CMakeRunConfiguration" factoryName="Application" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MiniSQL" TARGET_NAME="MiniSQL" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="MiniSQL" RUN_TARGET_NAME="MiniSQL">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="MiniSQL" type="CMakeRunConfiguration" factoryName="Application" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MiniSQL" TARGET_NAME="MiniSQL" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="MiniSQL" RUN_TARGET_NAME="MiniSQL">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -112,6 +110,7 @@
       <workItem from="1623054533663" duration="3371000" />
       <workItem from="1623206767882" duration="5033000" />
       <workItem from="1623227354666" duration="33770000" />
+      <workItem from="1623376807402" duration="8311000" />
     </task>
     <servers />
   </component>

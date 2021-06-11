@@ -11,6 +11,8 @@
 #include<vector>
 
 using namespace std;
+#define TABLE_INFO_PATH "../data/TableInfo.txt"
+
 
 extern BufferManager bm;
 
@@ -22,7 +24,7 @@ public:
 
     int findTable(const string& tableName);
 
-    int dropTable(string tableName);
+    int dropTable(const string& tableName);
 
     int createTable(const string& tableName, vector<Attribute> *attributes);
 

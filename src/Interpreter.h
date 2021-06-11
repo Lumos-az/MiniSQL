@@ -8,8 +8,11 @@
 
 #include <cstring>
 #include <vector>
+#include "CatalogManager.h"
 
 using namespace std;
+
+extern CatalogManager cm;
 
 class Interpreter {
 public:

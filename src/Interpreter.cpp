@@ -218,7 +218,6 @@ int Interpreter::execCreateTable(const string &text, int *shift) {
         return 0;
     }
 
-    CatalogManager cm;
     cm.createTable(tableName, &attributes);
     return 1;
 }
@@ -289,7 +288,6 @@ int Interpreter::execDropTable(const string &text, int *shift) {
         return 0;
     }
 
-    CatalogManager cm;
     cm.dropTable(tableName);
     return 1;
 }

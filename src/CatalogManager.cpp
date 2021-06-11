@@ -15,13 +15,16 @@ int CatalogManager::findTable(const string& tableName) {
     ifstream ifs;
     ifs.open(path, ios::in);
 
-    // If find the table, return 1, else return 0
-    if (ifs.fail())
-        return 0;
-    else {
-        ifs.close();
-        return 1;
+    int fileSize = bm.GetFileSize(TABLE_INFO_PATH);
+    for (int i = 0; i < fileSize; ++i) {
+        Block *block = bm.GetFileBlock(TABLE_INFO_PATH, i);
+        string content(block->data);
+        int find = (int) content.find("TABLE_NAME:" + tableName);
+        if (find != std::string::npos)
+            return 1;
     }
+
+    return 0;
 }
 
 /* tableInfo: TABLE_NAME:tableName|ATTRIBUTE_NUM:attributeNum｜PRIMARY_KEY:primaryKey|INDEX_NUM:indexNum|ATTRIBUTE_INFO_0:attributeName,dataType,charSize,primaryKey,unique,index|# */
@@ -72,45 +75,62 @@ int CatalogManager::createTable(const string& tableName, vector<Attribute> *attr
         cout << "Table already exists!" << endl;
         return -1;
     }
-
+    
     // Get table info
     string tableInfo = createTableInfo(tableName, attributes);
-    cout << tableInfo << endl;
+    int tableInfoLength = (int) tableInfo.length();
 
-    // Write tableInfo to buffer
-    bm.CreateFile(tableName);
-    int size = tableInfo.size();
-    int blockNum = size / BLOCK_SIZE + 1;
-    Block *block = bm.GetFileBlock(tableName, 0);
-    if (blockNum == 1) {
-        strcpy(block->data, tableInfo.c_str());
-    } else { // TableInfo should be stored in more than one block
-        strcpy(block->data, tableInfo.substr(0, BLOCK_SIZE).c_str());
-        int count = 1;
-        while (count != blockNum) {
-            bm.AppendFile(tableName);
-            block = bm.GetFileBlock(tableName, count);
-            strcpy(block->data, tableInfo.substr(BLOCK_SIZE * count, BLOCK_SIZE).c_str());
-            count++;
+    // Traverse blocks to find whether there is space to store the tableInfo
+    int fileSize = bm.GetFileSize(TABLE_INFO_PATH);
+    for (int i = 0; i < fileSize; ++i) {
+        Block *block = bm.GetFileBlock(TABLE_INFO_PATH, i);
+        string content(block->data);
+        int contentLength = (int) content.length();
+        // If there is enough space for table info
+        if (contentLength + tableInfoLength <= BLOCK_SIZE) {
+            content.append(tableInfo);
+            strcpy(block->data, content.c_str());
+            bm.SaveFile(TABLE_INFO_PATH);
+            return 1;
         }
     }
 
-    // Save table info to disk
-    bm.SaveFile(tableName);
+    // No space, so need to append a block
+    bm.AppendFile(TABLE_INFO_PATH);
+    Block *block = bm.GetFileBlock(TABLE_INFO_PATH, fileSize++);
+    strcpy(block->data, tableInfo.c_str());
 
+    // Save the file
+    bm.SaveFile(TABLE_INFO_PATH);
     cout << "Success to create the table!" << endl;
     return 1;
 }
 
 /* Drop the table */
-int CatalogManager::dropTable(string tableName) {
+int CatalogManager::dropTable(const string& tableName) {
     // If the table not exist
     if (!findTable(tableName)) {
         cout << "Table not exists!" << endl;
         return 0;
     }
 
-    bm.DeleteFile(tableName);
+    int fileSize = bm.GetFileSize(TABLE_INFO_PATH);
+
+    // Traverse blocks to find the tableInfo according the tableName
+    for (int i = 0; i < fileSize; ++i) {
+        Block *block = bm.GetFileBlock(TABLE_INFO_PATH, i);
+        string content(block->data);
+        int location = (int) content.find("TABLE_NAME:" + tableName);
+        // If find the table name, delete it in the block
+        if (location != std::string::npos) {
+            content = content.substr(0, location);
+            strcpy(block->data, content.c_str());
+        }
+    }
+
+    bm.SaveFile(TABLE_INFO_PATH);
+    cout << "Success to drop the table!" << endl;
+    return 1;
 }
 
 /* Get attributes in a table according the table name */
@@ -123,20 +143,21 @@ vector<Attribute> CatalogManager::getAttribute(const string &tableName) {
 
         // Extract table info
         string tableInfo;
-        int blockNum = bm.GetFileSize(tableName);
-        for (int i = 0; i < blockNum; ++i) {
-            Block *block = bm.GetFileBlock(tableName, i);
-            string temp(block->data);
-            int endIndex = temp.find("#");
-            // Find "#" in the block
-            if (endIndex != temp.npos) {
-                tableInfo.append(temp.substr(0, endIndex));
-                break;
-            } else  // Don't find "#"
-                tableInfo.append(temp);
-        }
-
+        int fileSize = bm.GetFileSize(tableName);
         int startIndex, endIndex;
+
+        // Traverse blocks to find the tableInfo according the tableName
+        for (int i = 0; i < fileSize; ++i) {
+            Block *block = bm.GetFileBlock(TABLE_INFO_PATH, i);
+            string content(block->data);
+            startIndex = (int) content.find("TABLE_NAME:" + tableName);
+            // If find the table name, extract the tableInfo
+            if (startIndex != std::string::npos) {
+                startIndex = (int) content.find("|", startIndex);
+                endIndex = (int) content.find("#", startIndex);
+                tableInfo = content.substr(startIndex + 1, endIndex - startIndex - 1);
+            }
+        }
 
         // Extract the number of attributes
         startIndex = (int)tableInfo.find("ATTRIBUTE_NUM");
@@ -144,6 +165,7 @@ vector<Attribute> CatalogManager::getAttribute(const string &tableName) {
         endIndex = (int)tableInfo.find("|", startIndex);
         int attributeNum = stoi(tableInfo.substr(startIndex + 1, endIndex - startIndex - 1));
 
+        // Extract attributes
         for (int i = 0; i < attributeNum; ++i) {
             startIndex = (int)tableInfo.find("ATTRIBUTE_INFO_" + to_string(i));
             startIndex = (int)tableInfo.find(":", startIndex);
@@ -220,11 +242,9 @@ int CatalogManager::createIndex(const string &tableName, const string &attribute
         }
     }
 
-    // Assume table info could be stored in one block
-    Block *block = bm.GetFileBlock(tableName, 0);
-    string tableInfo = createTableInfo(tableName, &attributes);
-    strcpy(block->data, tableInfo.c_str());
-    bm.SaveFile(tableInfo);
+    // Update the tableInfo
+    dropTable(tableName);
+    createTable(tableName, &attributes);
 
     return 1;
 }
@@ -252,11 +272,9 @@ int CatalogManager::dropIndex(const string &tableName, const string &attributeNa
         }
     }
 
-    // Assume table info could be stored in one block
-    Block *block = bm.GetFileBlock(tableName, 0);
-    string tableInfo = createTableInfo(tableName, &attributes);
-    strcpy(block->data, tableInfo.c_str());
-    bm.SaveFile(tableInfo);
+    // Update the tableInfo
+    dropTable(tableName);
+    createTable(tableName, &attributes);
 
     return 1;
 }

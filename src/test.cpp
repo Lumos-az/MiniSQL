@@ -17,6 +17,9 @@ int main() {
 //    cout << to_string(flag) << endl;
 //
 //    string s = "abbb23df";
+//    char * c = new char[100];
+//    strcpy(c, s.c_str());
+//    cout << c << endl;
 //    cout << s.find("123") << endl;
 //    int start = s.find("b");
 //    int end = s.find("b", start + 1);
