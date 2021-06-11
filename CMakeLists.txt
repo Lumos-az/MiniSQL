@@ -17,4 +17,4 @@ add_executable(MiniSQL
         src/BufferManager.h
         src/RecordManager.cpp
         src/RecordManager.h
-        )
+        src/API.cpp src/API.h)

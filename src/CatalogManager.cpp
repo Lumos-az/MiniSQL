@@ -11,10 +11,6 @@ using namespace std;
 
 /* Find the table according the table name */
 int CatalogManager::findTable(const string& tableName) {
-    string path = "../data/" + tableName + ".txt";
-    ifstream ifs;
-    ifs.open(path, ios::in);
-
     int fileSize = bm.GetFileSize(TABLE_INFO_PATH);
     for (int i = 0; i < fileSize; ++i) {
         Block *block = bm.GetFileBlock(TABLE_INFO_PATH, i);
@@ -38,11 +34,16 @@ string CatalogManager::createTableInfo(const string &tableName, vector<Attribute
     tableInfo.append("ATTRIBUTE_NUM:" + to_string(((*attributes).size())) + "|");
 
     // Store the primary key
+    bool hasKey = false;
     for (const auto& attribute : (*attributes))
         if (attribute.primaryKey) {
+            hasKey = true;
             tableInfo.append("PRIMARY_KEY:" + attribute.name + "|");
             break;
         }
+    if (!hasKey)
+        tableInfo.append("PRIMARY_KEY:NONE|");
+
 
     // Store the number of indexes
     int indexNum = 0;
@@ -104,6 +105,44 @@ int CatalogManager::createTable(const string& tableName, vector<Attribute> *attr
     bm.SaveFile(TABLE_INFO_PATH);
     cout << "Success to create the table!" << endl;
     return 1;
+}
+
+/* Show the information of the table */
+void CatalogManager::showTable(const string &tableName) {
+    if (!findTable(tableName))
+        cout << "Table named " << tableName << "not exist!" << endl;
+    else {
+        vector<Attribute> attributes = getAttribute(tableName);
+        cout << "TABLE NAME: " << tableName << "|ATTRIBUTE NUM: " << attributes.size() << "|";
+
+        bool hasKey = false;
+        int indexNum = 0;
+        for (auto & attribute : attributes) {
+            if (attribute.primaryKey)
+                cout << "PRIMARY KEY: " << attribute.name << "|";
+            if (attribute.index != "none")
+                indexNum++;
+        }
+        cout << "INDEX NUM: " << indexNum << "|" << endl;
+
+        cout << "ATTRIBUTES:" << endl;
+        for (auto & attribute : attributes) {
+            cout << attribute.name << " ";
+            if (attribute.dataType == 0)
+                cout << "int" << " ";
+            else if (attribute.dataType == 1)
+                cout << "float" << " ";
+            else
+                cout << "char(" << attribute.charSize << ") ";
+            if (attribute.primaryKey)
+                cout << "primary key ";
+            if (attribute.unique)
+                cout << "unique ";
+            if (attribute.index != "none")
+                cout << "index:" << attribute.index << " ";
+            cout << endl;
+        }
+    }
 }
 
 /* Drop the table */
@@ -203,6 +242,7 @@ vector<Attribute> CatalogManager::getAttribute(const string &tableName) {
     }
 }
 
+/* Determine whether the attribute exists in the table */
 int CatalogManager::findAttribute(const string &tableName, const string &attributeName) {
     // If the table not exist
     if (!findTable(tableName)) {
@@ -220,6 +260,7 @@ int CatalogManager::findAttribute(const string &tableName, const string &attribu
     return 0;
 }
 
+/* Create the index */
 int CatalogManager::createIndex(const string &tableName, const string &attributeName, const string &indexName) {
     // If the table not exist
     if (!findTable(tableName)) {
@@ -249,36 +290,31 @@ int CatalogManager::createIndex(const string &tableName, const string &attribute
     return 1;
 }
 
-
-int CatalogManager::dropIndex(const string &tableName, const string &attributeName, const string &indexName) {
+/* Drop the index */
+int CatalogManager::dropIndex(const string &tableName, const string &indexName) {
     // If the table not exist
     if (!findTable(tableName)) {
-        cout << "Table not exists!" << endl;
-        return 0;
-    }
-
-    // If the attribute not exist
-    if(!findAttribute(tableName, attributeName)) {
-        cout << "Attribute not exists!" << endl;
+        cout << "Table named " << tableName << " not exists!" << endl;
         return 0;
     }
 
     // Drop the index
     vector<Attribute> attributes = getAttribute(tableName);
     for (auto attribute : attributes) {
-        if (attribute.name == attributeName) {
+        if (attribute.index == indexName) {
             attribute.index = "none";
-            break;
+            // Update the tableInfo
+            dropTable(tableName);
+            createTable(tableName, &attributes);
+            return 1;
         }
     }
 
-    // Update the tableInfo
-    dropTable(tableName);
-    createTable(tableName, &attributes);
-
-    return 1;
+    cout << "There is no index named " << indexName << "in table " << tableName << endl;
+    return 0;
 }
 
+/* Determine whether the index is in the table */
 string CatalogManager::findIndex(const string &tableName, const string &indexName) {
     // If the table not exist
     if (!findTable(tableName)) {
@@ -293,3 +329,44 @@ string CatalogManager::findIndex(const string &tableName, const string &indexNam
     }
     cout << indexName << "not in" << tableName << endl;
 }
+
+/* Show the information of all indexes in the database */
+void CatalogManager::showAllIndex() {
+    int fileSize = bm.GetFileSize(TABLE_INFO_PATH);
+
+    // Traverse all blocks to print index info
+    for (int i = 0; i < fileSize; ++i) {
+        Block *block = bm.GetFileBlock(TABLE_INFO_PATH, i);
+        string content(block->data);
+        int startIndex = (int) content.find("TABLE_NAME");
+        int endIndex;
+
+        // Extract all tableInfos in a block
+        while (startIndex != std::string::npos) {
+            // Extract the table name
+            startIndex = (int) content.find(":", startIndex);
+            endIndex = (int) content.find("|", startIndex);
+            string tableName = content.substr(startIndex + 1, endIndex - startIndex - 1);
+
+            // Extract the indexNum
+            startIndex = (int) content.find("INDEX_NUM");
+            startIndex = (int) content.find(":", startIndex);
+            endIndex = (int) content.find("|", startIndex);
+            int indexNum = stoi(content.substr(startIndex + 1, endIndex - startIndex - 1));
+
+            if (indexNum != 0) { // If the table has index
+                cout << tableName << ": ";
+                vector<Attribute> attributes = getAttribute(tableName);
+                for (auto & attribute : attributes)
+                    if (attribute.index != "none")
+                        cout << attribute.index << " on " << attribute.name << " ";
+                cout << endl;
+            } else {
+                cout << "no index" << endl;
+            }
+            startIndex = (int) content.find("TABLE_NAME", startIndex);
+        }
+    }
+}
+
+

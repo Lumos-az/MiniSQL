@@ -5,7 +5,6 @@
 #include "Interpreter.h"
 #include "Attribute.h"
 #include "Condition.h"
-#include "CatalogManager.h"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -53,6 +52,8 @@ int Interpreter::Interpret(const string &text) {
         return execQuit(text, shift);
     } else if (word == "execfile") {
         return execFile(text, shift);
+    } else if (word == "show") {
+        return execShow(text, shift);
     } else {
         cout << "Syntax error" << endl;
         return 0;
@@ -259,6 +260,7 @@ int Interpreter::execCreateIndex(const string &text, int *shift) {
         }
     }
 
+    api.createIndex(tableName, attributeName, indexName);
     return 1;
 }
 
@@ -288,7 +290,7 @@ int Interpreter::execDropTable(const string &text, int *shift) {
         return 0;
     }
 
-    cm.dropTable(tableName);
+    api.dropTable(tableName);
     return 1;
 }
 
@@ -316,6 +318,7 @@ int Interpreter::execDropIndex(const string &text, int *shift) {
         return 0;
     }
 
+    api.dropIndex(tableName, indexName);
     return 1;
 }
 
@@ -625,6 +628,37 @@ string Interpreter::extractWord(const string &text, int *shift) {
         return word;
     }
 
+}
+
+int Interpreter::execShow(const string &text, int *shift) {
+    string word = extractWord(text, shift);
+    if (word == "table") {
+        return execShowTable(text, shift);
+    } else if (word == "index") {
+        return execShowAllIndex();
+    } else {
+        cout << "Syntax error for show" << endl;
+        return 0;
+    }
+}
+
+int Interpreter::execShowTable(const string &text, int *shift) {
+    string word = extractWord(text, shift);
+    string tableName = word;
+
+    // Determine whether table name exists
+    if (word == ";") {
+        cout << "Syntax error for no table name" << endl;
+        return 0;
+    }
+
+    cm.showTable(tableName);
+    return 1;
+}
+
+int Interpreter::execShowAllIndex() {
+    cm.showAllIndex();
+    return 1;
 }
 
 

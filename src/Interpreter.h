@@ -8,11 +8,11 @@
 
 #include <cstring>
 #include <vector>
+#include "API.h"
 #include "CatalogManager.h"
 
 using namespace std;
 
-extern CatalogManager cm;
 
 class Interpreter {
 public:
@@ -52,6 +52,15 @@ public:
     // Delete table or records
     int execDelete(const string &text, int *shift);
 
+    // Process word "show"
+    int execShow(const string &text, int *shift);
+
+    // Show table Info
+    int execShowTable(const string &text, int *shift);
+
+    // Show index info
+    int execShowAllIndex();
+
     // Quit the MiniSQL
     int execQuit(const string &text, int *shift);
 
@@ -62,6 +71,9 @@ public:
 
     ~Interpreter() = default;
 
+private:
+    API api;
+    CatalogManager cm;
 };
 
 #endif //MINISQL_INTERPRETER_H
