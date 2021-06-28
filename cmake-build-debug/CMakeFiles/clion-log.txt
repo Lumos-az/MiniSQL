@@ -1,4 +1,0 @@
-"/Users/heangzhan/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/211.7442.42/CLion.app/Contents/bin/cmake/mac/bin/cmake" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/heangzhan/Desktop/MiniSQL
--- Configuring done
--- Generating done
--- Build files have been written to: /Users/heangzhan/Desktop/MiniSQL/cmake-build-debug
