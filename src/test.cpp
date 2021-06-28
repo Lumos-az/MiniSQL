@@ -10,6 +10,10 @@
 using namespace std;
 
 int main() {
+//    string s = "000001.2";
+//    float a = stof(s);
+//    cout << a << endl;
+
     Interpreter i;
     i.MainPage();
 

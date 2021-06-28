@@ -1,9 +1,0 @@
-create table book (
-    name char(3),
-    year int,
-    price float,
-    primary key (name)
-);
-
-insert into book values ("haz", 1999, 10.11);
-

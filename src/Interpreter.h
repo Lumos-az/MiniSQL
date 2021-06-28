@@ -67,13 +67,13 @@ public:
     // Exec SQL file
     int execFile(const string &text, int *shift);
 
-    Interpreter() = default;
+    Interpreter() {};
 
-    ~Interpreter() = default;
+    ~Interpreter() {};
 
 private:
-    API api;
-    CatalogManager cm;
+    API *api;
+    CatalogManager *cm;
 };
 
 #endif //MINISQL_INTERPRETER_H

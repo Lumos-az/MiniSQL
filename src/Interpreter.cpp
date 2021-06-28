@@ -26,9 +26,9 @@ void Interpreter::MainPage() {
             text += blank;
             text += line;
         } while (text[text.size() - 1] != ';');
-        cout << text << endl;
+//        cout << text << endl;
         fact = Interpret(text);
-        cout << fact << endl;
+//        cout << fact << endl;
     }
 
 }
@@ -95,11 +95,12 @@ int Interpreter::execCreateTable(const string &text, int *shift) {
     // Deal with attributes
     word = extractWord(text, shift);
     vector<Attribute> attributes;
-    while (word != "primary" && word != ")" && !word.empty()) {
+    while (!(word == "primary" or word == ")") && !word.empty()) {
         string attributeName = word;
         int dataType;
         bool unique = false;
         int charSize;
+        bool isPrimaryKey = false;
 
         // Deal with the data type
         word = extractWord(text, shift);
@@ -146,6 +147,8 @@ int Interpreter::execCreateTable(const string &text, int *shift) {
             return 0;
         }
 
+
+
         // Judge whether it is unique
         word = extractWord(text, shift);
         if (word == "unique") {
@@ -153,21 +156,49 @@ int Interpreter::execCreateTable(const string &text, int *shift) {
             word = extractWord(text, shift);
         }
 
+        if (word == "primary") {
+            word = extractWord(text, shift);
+            if (word != "key") {
+                cout << "Syntax Error for no \"key\"" << endl;
+                return 0;
+            }
+            isPrimaryKey = true;
+            unique = true;
+            word = extractWord(text, shift);
+        }
+
         // Determine whether "," exists
         if (word != ",") {
-            cout << "Syntax Error for no ," << endl;
-            return 0;
+            if (word != ")") {
+                cout << "Syntax Error for no ," << endl;
+                return 0;
+            }
         }
-        word = extractWord(text, shift);
+        else {
+            word = extractWord(text, shift);
+        }
+
 
         // Create and store attribute
         if (dataType == 2) {
-            Attribute attribute(attributeName, dataType, unique, charSize);
-            attributes.push_back(attribute);
-        } else {
-            Attribute attribute(attributeName, dataType, unique);
+            Attribute attribute(attributeName, dataType, unique, charSize, isPrimaryKey);
             attributes.push_back(attribute);
         }
+        else if (dataType == 0) {
+            Attribute attribute(attributeName, dataType, unique, 10, isPrimaryKey);
+            attributes.push_back(attribute);
+        }
+        else
+        {
+            Attribute attribute(attributeName, dataType, unique, 10, isPrimaryKey);
+            attributes.push_back(attribute);
+        }
+    }
+
+    // No primary key in the last line
+    if (word == ")") {
+        api->createTable(tableName, &attributes);
+        return 1;
     }
 
     // Deal with primary key
@@ -219,7 +250,7 @@ int Interpreter::execCreateTable(const string &text, int *shift) {
         return 0;
     }
 
-    cm.createTable(tableName, &attributes);
+    api->createTable(tableName, &attributes);
     return 1;
 }
 
@@ -260,7 +291,7 @@ int Interpreter::execCreateIndex(const string &text, int *shift) {
         }
     }
 
-    api.createIndex(tableName, attributeName, indexName);
+    api->createIndex(tableName, attributeName, indexName);
     return 1;
 }
 
@@ -290,7 +321,7 @@ int Interpreter::execDropTable(const string &text, int *shift) {
         return 0;
     }
 
-    api.dropTable(tableName);
+    api->dropTable(tableName);
     return 1;
 }
 
@@ -318,7 +349,7 @@ int Interpreter::execDropIndex(const string &text, int *shift) {
         return 0;
     }
 
-    api.dropIndex(tableName, indexName);
+    api->dropIndex(tableName, indexName);
     return 1;
 }
 
@@ -350,6 +381,7 @@ int Interpreter::execSelect(const string &text, int *shift) {
     word = extractWord(text, shift);
     // Sentence is over
     if (word == ";") {
+        api->select(tableName, &attributes, nullptr);
         return 1;
     }
         // Conditional statement exists
@@ -395,6 +427,8 @@ int Interpreter::execSelect(const string &text, int *shift) {
             cout << "Syntax error for no \";\"" << endl;
             return 0;
         }
+
+        api->select(tableName, &attributes, &conditions);
         return 1;
     } else {
         cout << "Syntax error" << endl;
@@ -405,7 +439,8 @@ int Interpreter::execSelect(const string &text, int *shift) {
 /* Insert value into table */
 int Interpreter::execInsert(const string &text, int *shift) {
     string tableName;
-    vector<string> value;
+    vector<string> tuple;
+    vector<vector<string>> tuples;
 
     // Determine whether "into" exists
     string word = extractWord(text, shift);
@@ -434,7 +469,7 @@ int Interpreter::execInsert(const string &text, int *shift) {
     // Deal with value
     word = extractWord(text, shift);
     do {
-        value.push_back(word);
+        tuple.push_back(word);
         word = extractWord(text, shift);
         if (word == ",")
             word = extractWord(text, shift);
@@ -445,12 +480,14 @@ int Interpreter::execInsert(const string &text, int *shift) {
             return 0;
         }
     } while (word != ")");
+    tuples.push_back(tuple);
 
 //    // Check out
 //    for (auto & i : value) {
 //        cout << i << endl;
 //    }
 
+    api->insertValue(tableName, &tuple);
     return 1;
 }
 
@@ -472,6 +509,7 @@ int Interpreter::execDelete(const string &text, int *shift) {
     word = extractWord(text, shift);
     // Sentence is over
     if (word == ";") {
+        api->deleteTable(tableName);
         return 1;
     }
         // Conditional statement exists
@@ -522,7 +560,7 @@ int Interpreter::execDelete(const string &text, int *shift) {
 //        for (auto & i : conditions) {
 //            cout << i.name << i.operate << i.value << endl;
 //        }
-
+        api->deleteRecord(tableName, &conditions);
         return 1;
     } else {
         cout << "Syntax error" << endl;
@@ -533,12 +571,13 @@ int Interpreter::execDelete(const string &text, int *shift) {
 
 /* Quit the MiniSQL */
 int Interpreter::execQuit(const string &text, int *shift) {
+    cout << "Success to quit the MiniSQL!" << endl;
     return -1;
 }
 
 /* Exec SQL file */
 int Interpreter::execFile(const string &text, int *shift) {
-    string path = "../data/";
+    string path = "../tests/";
 
     // Determine whether file name exists
     string word = extractWord(text, shift);
@@ -568,7 +607,10 @@ int Interpreter::execFile(const string &text, int *shift) {
             if (ifs.eof())
                 break;
             fileText += blank;
+            if (line[line.size() - 1] == '\r')
+                line = line.substr(0, line.size() - 1);
             fileText += line;
+
         } while (fileText[fileText.size() - 1] != ';');
 
         // Determine whether all spaces
@@ -598,17 +640,14 @@ string Interpreter::extractWord(const string &text, int *shift) {
         return word;
     }
         // Encounter quotation mark
-    else if (text[*shift] == '\'') {
+    else if (text[*shift] == '\'' or text[*shift] == '\"') {
         (*shift)++;
         start = *shift;
-        while (text[*shift] != '\'' && text[*shift] != ';') {
-            if (*shift > 100) {
-                break;
-            }
+        while (!(text[*shift] == '\'' or text[*shift] == '\"') && text[*shift] != ';') {
             (*shift)++;
         }
         // Can't find the corresponding quotation mark
-        if (text[*shift] != '\'') {
+        if (text[*shift] != '\'' and text[*shift] != '\"') {
             return word;
         } else {
             end = *shift;
@@ -652,12 +691,12 @@ int Interpreter::execShowTable(const string &text, int *shift) {
         return 0;
     }
 
-    cm.showTable(tableName);
+    cm->showTable(tableName);
     return 1;
 }
 
 int Interpreter::execShowAllIndex() {
-    cm.showAllIndex();
+    cm->showAllIndex();
     return 1;
 }
 

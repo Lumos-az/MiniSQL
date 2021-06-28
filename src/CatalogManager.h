@@ -14,8 +14,6 @@ using namespace std;
 #define TABLE_INFO_PATH "../data/TableInfo.txt"
 
 
-extern BufferManager bm;
-
 class CatalogManager {
 public:
     /* Table */
@@ -56,6 +54,7 @@ public:
 
     // Show all indexes in the database
     void showAllIndex();
+
 
     CatalogManager() = default;;
 

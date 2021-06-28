@@ -1,11 +1,5 @@
 # MiniSQL
 
-## 接口说明
-
-> 请各模块将需要共用的接口信息写在下方
-
-### 
-
 ## 体系结构
 
 [![2GpwVI.png](https://z3.ax1x.com/2021/06/04/2GpwVI.png)](https://imgtu.com/i/2GpwVI)
@@ -79,3 +73,7 @@ Buffer Manager负责缓冲区的管理，主要功能有：
 #### DB Files
 
 DB Files指构成数据库的所有数据文件，主要由记录数据文件、索引数据文件和Catalog数据文件组成。
+
+## 存在的不足
+
+小组中负责RecordManager模块的成员在设计与API模块的交互时存在部分问题，导致本应在RecordManger模块中的函数出现在了API模块，可适当改进。
